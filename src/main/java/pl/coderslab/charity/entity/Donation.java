@@ -1,8 +1,11 @@
 package pl.coderslab.charity.entity;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 
 @Entity
@@ -14,15 +17,22 @@ public class Donation {
     private long id;
     private int quantity;
 
-    @ManyToOne
-    private Category category;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "donations_categories",
+            joinColumns = { @JoinColumn(name = "donation_id") },
+            inverseJoinColumns = { @JoinColumn(name = "categories_id") })
+    private List<Category> categories;
 
-    @ManyToOne
+    @ManyToOne(fetch=FetchType.LAZY)
     private Institution institution;
+
+    private String phone;
 
     private String street;
     private String city;
     private String zipCode;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate pickUpDate;
     private LocalTime pickUpTime;
     private String pickUpComment;
@@ -46,12 +56,13 @@ public class Donation {
         this.quantity = quantity;
     }
 
-    public Category getCategory() {
-        return category;
+    public List<Category> getCategories() {
+
+        return categories;
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 
     public Institution getInstitution() {
@@ -108,5 +119,14 @@ public class Donation {
 
     public void setPickUpComment(String pickUpComment) {
         this.pickUpComment = pickUpComment;
+    }
+
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }
